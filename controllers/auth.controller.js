@@ -7,7 +7,7 @@ const createUser = async(req, res = response) => {
 
     try {
 
-        const { name, email, password} = req.body;
+        const { email, password} = req.body;
 
         let user = await User.findOne({ email });
         if( user ){
@@ -18,15 +18,11 @@ const createUser = async(req, res = response) => {
         }
         
         user = new User(req.body);
-        // Encrypting pass
         const salt = bcrypt.genSaltSync();
         user.password = bcrypt.hashSync(password, salt);
-
         await user.save();
 
-        // Generate JWT
         const token = await generateJWT(user.id, user.name);
-
         res.json({
             ok: true,
             id: user.id,
@@ -50,7 +46,6 @@ const loginUser = async(req, res = response) => {
 
         const { email, password} = req.body;
 
-        // validate email
         let user = await User.findOne({ email });
         if(!user){
             return res.status(400).json({ 
@@ -59,7 +54,6 @@ const loginUser = async(req, res = response) => {
             });
         };
         
-        // validate password
         const validPassword = bcrypt.compareSync(password, user.password);
         if(!validPassword){
             return res.status(400).json({ 
@@ -68,9 +62,7 @@ const loginUser = async(req, res = response) => {
             });
         }
 
-        // Generate JWT
         const token = await generateJWT(user.id, user.name);
-
         res.json({
             ok: true,
             id: user.id,
@@ -91,7 +83,6 @@ const loginUser = async(req, res = response) => {
 const renew =  async(req, res = response) => {
 
     const { id, name } = req;
-    // renew token:
     const token = await generateJWT(id, name);
 
     res.json({
