@@ -1,17 +1,11 @@
 ## BACKEND : NodeJS Auth base project para diferentes usos.
 
--- Node
--- Express
--- Parser
--- Router
--- Controllers
--- Middlewares -> Validaciones
--- Mongoose -> Conexion a DB
+Proyecto base de autentificacion mediando JWT y MongoDB para usos multiples. Se implementan librerias como:
 
-user: mern_user
-pass: Z5GuZVruSt5XXQsd
-
--- Schema user -> esquema de modelo user en dbmongo
--- Bcryptjs -> encriptar password
--- JWT -> creacion
--- JWT -> revalidar
+```
+Node
+Express
+Bcryptjs -> encriptar password
+Middlewares -> JWT
+Mongoose -> Conexion a DB
+```
