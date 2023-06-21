@@ -13,3 +13,7 @@ app.use('/api/auth', require('./routes/auth'))
 app.listen( process.env.PORT , () => {
     console.log('Servidor corriendo en: ' + process.env.PORT)
 });
+
+module.exports = {
+    app
+}
