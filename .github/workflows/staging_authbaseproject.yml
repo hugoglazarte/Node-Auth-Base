@@ -27,8 +27,8 @@ jobs:
           npm run build --if-present
           npm run test --if-present
         env:
-          DB_CNN: mongodb+srv://mern_user:Z5GuZVruSt5XXQsd@authappdb.7qmanle.mongodb.net/auth_app
-          SECRET_JWT_SEED: example_seed@Shw1bcpNk7SYpu%I
+          DB_CNN: ${{ vars.DB_CNN }}
+          SECRET_JWT_SEED: ${{ vars.SECRET_JWT_SEED }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
