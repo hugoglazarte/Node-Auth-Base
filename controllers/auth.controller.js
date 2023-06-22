@@ -1,25 +1,14 @@
 const { response } = require('express');
 const bcrypt = require('bcryptjs');
-const User = require('../models/User')
+const User = require('../models/User');
 const { generateJWT } = require('../helpers/jwt');  
 
 const createUser = async(req, res = response) => {
 
     try {
-
-        const { email, password} = req.body;
-
-        let user = await User.findOne({ email });
-        if( user ){
-            return res.status(400).json({
-                ok: false,
-                msg: 'Usuario ya existe con el mail cargado'
-            });
-        }
-        
         user = new User(req.body);
         const salt = bcrypt.genSaltSync();
-        user.password = bcrypt.hashSync(password, salt);
+        user.password = bcrypt.hashSync(req.body.password, salt);
         await user.save();
 
         const token = await generateJWT(user.id, user.name);
@@ -32,10 +21,8 @@ const createUser = async(req, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({
-            ok: false,
-            msg: 'Ocurrio un error al crear el nuevo usuario'
-        })
+        const err = new ErrorResponse(500, 'app.createUser.error', 'Ocurrio un error al crear el nuevo usuario');
+        res.status(err.statusCode).json(modelToJson(err));
     };
 
 };
@@ -43,25 +30,8 @@ const createUser = async(req, res = response) => {
 const loginUser = async(req, res = response) => {
 
     try {
-
-        const { email, password} = req.body;
-
+        const { email } = req.body;
         let user = await User.findOne({ email });
-        if(!user){
-            return res.status(400).json({ 
-                ok: false, 
-                msg: 'No existe el usuario para ese email'
-            });
-        };
-        
-        const validPassword = bcrypt.compareSync(password, user.password);
-        if(!validPassword){
-            return res.status(400).json({ 
-                ok: false, 
-                msg: 'El password es invalido'
-            });
-        }
-
         const token = await generateJWT(user.id, user.name);
         res.json({
             ok: true,
@@ -72,10 +42,8 @@ const loginUser = async(req, res = response) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({
-            ok: false,
-            msg: 'Ocurrio un error al intentar hacer el login'
-        })
+        const err = new ErrorResponse(500, 'app.loginUser.error', 'Ocurrio un error al intentar hacer el login');
+        res.status(err.statusCode).json(modelToJson(err));
     };
 
 };

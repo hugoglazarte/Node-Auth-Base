@@ -1,14 +1,14 @@
 const { response } = require('express');
 const jwt = require('jsonwebtoken');
+const { ErrorResponse, modelToJson } = require('../models/ErrorResponse');
 
 const validateJWT = (req, res = response, next) => {
 
     const token = req.header('x-token');
+
     if( !token ){
-        return res.status(401).json({
-            ok: false,
-            msg: 'No hay token en header'
-        })
+        const err = new ErrorResponse(401, 'app.validateJWT.error', 'No hay token en header');
+        return res.status(err.statusCode).json(modelToJson(err));
     }
 
     try {
@@ -18,14 +18,15 @@ const validateJWT = (req, res = response, next) => {
         )
         req.id = payload.id;
         req.name = payload.name;
+
+        next();
+        
     } catch (error) {
-        return res.status(401).json({
-            ok: false,
-            msg: 'Token no valido'
-        })
+        const err = new ErrorResponse(401, 'app.validateJWT.error', 'Token no valido');
+        return res.status(err.statusCode).json(modelToJson(err));
     }
 
-    next();
+    
 }
 
 module.exports = {

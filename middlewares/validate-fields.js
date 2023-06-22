@@ -1,14 +1,14 @@
 const { response } = require('express');
 const { validationResult } = require('express-validator');
+const { ErrorResponse, modelToJson } = require('../models/ErrorResponse');
 
 const validateFields = (req, res = response, next) => {
-    // Handle Errors
+
     const errors = validationResult( req );
     if( !errors.isEmpty() ){
-        return res.status(400).json({
-            ok: false,
-            errors: errors.mapped()
-        })
+        console.log(errors.mapped())
+        const err = new ErrorResponse(400, 'app.validateFields.error', errors.mapped());
+        return res.status(err.statusCode).json(modelToJson(err));
     }
 
     next();
