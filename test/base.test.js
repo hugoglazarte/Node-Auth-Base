@@ -1,12 +1,10 @@
-const express = require('express');
-const chai = require('chai');
 const request = require('supertest');
 const { expect } = require('expect');
 const { app } = require('../index.js');
 
 describe('POST Create User', () => {
     
-    it('create new user', async() => {
+    it('Create new user error, user exists', async() => {
         // Arrange
         const newUser = {
             name: 'dummys',
@@ -14,10 +12,15 @@ describe('POST Create User', () => {
             password: 'dummyPass'
         };
         // Act
-        const response = await request(app).post('/api/auth/new').send(newUser);
-        // Assert
-        //console.log(response)
-        expect(response.statusCode).toBe(400);
-        expect(response.ok).toBe(false);
+        request(app)
+            .post('/api/auth/new')
+            .send(newUser)
+            .then(response => {
+                // Assert / Expect
+                expect(response.statusCode).toBe(400);
+                expect(response.ok).toBe(false);
+                done();
+            })
+            .catch(err => done(err));
     });
 });
